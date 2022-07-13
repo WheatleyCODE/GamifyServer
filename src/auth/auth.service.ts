@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import * as uuid from 'uuid';
 import { MailService } from 'src/mail/mail.service';
 import { UsersService } from 'src/users/users.service';
@@ -20,10 +20,10 @@ export class AuthService {
       const condidate = await this.usersService.findUserByEmail(dto.email);
 
       if (condidate) {
-        // ! Обработать ошибку
-        console.log(condidate);
-        console.log('error');
-        return;
+        throw new HttpException(
+          'Пользователь с таким Email уже сущетсвует',
+          HttpStatus.CONFLICT,
+        );
       }
 
       const user = await this.usersService.create(dto);
@@ -42,7 +42,7 @@ export class AuthService {
         ...tokens,
       };
     } catch (e) {
-      console.log(e);
+      throw e;
     }
   }
 

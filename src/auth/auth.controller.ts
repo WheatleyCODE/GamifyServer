@@ -15,17 +15,12 @@ export class AuthController {
   ): Promise<Response<UserData>> {
     const userData = await this.authService.registration(dto);
 
-    // ! Временный иф до обработки ошибки
-    if (userData) {
-      res.cookie('refreshToken', userData.refreshToken, {
-        maxAge: 30 * 24 * 60 * 60 * 1000,
-        httpOnly: true,
-      });
+    res.cookie('refreshToken', userData.refreshToken, {
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+    });
 
-      return res.json(userData);
-    }
-
-    return res.json({});
+    return res.json(userData);
   }
 
   @Post('/login')
