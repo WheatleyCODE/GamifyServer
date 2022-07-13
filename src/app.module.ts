@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { PostModule } from './post/post.module';
 import { CommentModule } from './comment/comment.module';
@@ -16,9 +16,10 @@ import { AlbumModule } from './album/album.module';
     CommentModule,
     PostModule,
     UserModule,
-    MongooseModule.forRoot('mongodb://localhost:2717/gamify'),
+    ConfigModule.forRoot({ envFilePath: `.${process.env.NODE_ENV}.env` }),
+    MongooseModule.forRoot(process.env.URL_MONGO),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [],
 })
 export class AppModule {}
