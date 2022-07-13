@@ -8,8 +8,11 @@ import { CommentModule } from './comment/comment.module';
 import { CharacterModule } from './character/character.module';
 import { TrackModule } from './track/track.module';
 import { AlbumModule } from './album/album.module';
+import { AuthController } from './auth/auth.controller';
+import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
+    AuthModule,
     AlbumModule,
     TrackModule,
     CharacterModule,
@@ -19,7 +22,7 @@ import { AlbumModule } from './album/album.module';
     ConfigModule.forRoot({ envFilePath: `.${process.env.NODE_ENV}.env` }),
     MongooseModule.forRoot(process.env.URL_MONGO),
   ],
-  controllers: [AppController],
+  controllers: [AppController, AuthController],
   providers: [],
 })
 export class AppModule {}
