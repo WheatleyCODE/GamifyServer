@@ -26,13 +26,12 @@ export class AuthService {
         );
       }
 
+      const randomString = uuid.v4();
+      const link = `${process.env.API_URL}/api/activate/${randomString}`;
+      await this.mailService.sendActivationMail(dto.email, link);
+
       const user = await this.usersService.create(dto);
       const userDto = new UserDto(user);
-      const randomString = uuid.v4();
-
-      const link = `${process.env.API_URL}/api/activate/${randomString}`;
-
-      await this.mailService.sendActivationMail(dto.email, link);
 
       const tokens = this.tokensService.generateTokens({ ...userDto });
       this.tokensService.saveTokens(userDto.id, tokens);
