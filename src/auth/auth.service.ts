@@ -1,11 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import * as uuid from 'uuid';
+import * as bcrypt from 'bcrypt';
 import { MailService } from 'src/mail/mail.service';
 import { UsersService } from 'src/users/users.service';
 import { RegistrationDto } from './dto/registration.dto';
 import { TokensService } from 'src/tokens/tokens.service';
 import { UserDto } from './dto/user.dto';
 import { UserData } from 'src/types/auth';
+import { LoginDto } from './dto/login.dto';
+import { UserDocument } from 'src/users/schemas/user.schema';
 
 @Injectable()
 export class AuthService {
@@ -17,11 +20,12 @@ export class AuthService {
 
   async registration(dto: RegistrationDto): Promise<UserData> {
     try {
-      const condidate = await this.usersService.findUserBy({
-        email: dto.email,
+      const { password, email } = dto;
+      const user = await this.usersService.findUserBy({
+        email,
       });
 
-      if (condidate) {
+      if (user) {
         throw new HttpException(
           'Пользователь с таким Email уже сущетсвует',
           HttpStatus.CONFLICT,
@@ -30,28 +34,56 @@ export class AuthService {
 
       const randomString = uuid.v4();
       const link = `${process.env.URL_API}/api/auth/activate/${randomString}`;
-      await this.mailService.sendActivationMail(dto.email, link);
+      await this.mailService.sendActivationMail(email, link);
 
-      const user = await this.usersService.create(dto);
-      const userDto = new UserDto(user);
-      const tokens = this.tokensService.generateTokens({ ...userDto });
-      this.tokensService.saveTokens(userDto.id, tokens);
+      const hashPassword = await bcrypt.hash(password, 6);
+      const newUser = await this.usersService.create({
+        ...dto,
+        password: hashPassword,
+      });
 
-      return {
-        user: userDto,
-        ...tokens,
-      };
+      return await this.getTokensAndUserData(newUser);
     } catch (e) {
       throw e;
     }
   }
 
-  async login(): Promise<UserData> {
+  async login(dto: LoginDto): Promise<UserData> {
     try {
-      return {} as UserData;
+      const { email, password } = dto;
+      const user = await this.usersService.findUserBy({ email });
+
+      if (!user) {
+        throw new HttpException(
+          'Неверная почта или пароль',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      const isPassEqueals = await bcrypt.compare(password, user.password);
+
+      if (!isPassEqueals) {
+        throw new HttpException(
+          'Неверная почта или пароль',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      return await this.getTokensAndUserData(user);
     } catch (e) {
-      console.log(e);
+      throw e;
     }
+  }
+
+  private async getTokensAndUserData(user: UserDocument): Promise<UserData> {
+    const userDto = new UserDto(user);
+    const tokens = this.tokensService.generateTokens({ ...userDto });
+    await this.tokensService.saveTokens(userDto.id, tokens);
+
+    return {
+      user: userDto,
+      ...tokens,
+    };
   }
 
   async logout(): Promise<void> {
@@ -63,16 +95,16 @@ export class AuthService {
 
   async activate(activationLink: string): Promise<void> {
     try {
-      const condidate = await this.usersService.findUserBy({
+      const user = await this.usersService.findUserBy({
         activationLink,
       });
 
-      if (!condidate) {
+      if (!user) {
         throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
       }
 
-      condidate.isActivated = true;
-      await condidate.save();
+      user.isActivated = true;
+      await user.save();
     } catch (e) {
       throw e;
     }
