@@ -1,8 +1,8 @@
 import { AuthService } from './auth.service';
-import { Body, Controller, Get, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
 import { RegistrationDto } from './dto/registration.dto';
 import { UserData } from 'src/types/auth';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 
 @Controller('/api/auth')
 export class AuthController {
@@ -34,8 +34,10 @@ export class AuthController {
   }
 
   @Get('/activate/:link')
-  activate(): Promise<void> {
-    return this.authService.activate();
+  async activate(@Req() req: Request, @Res() res: Response) {
+    const activationLink = req.params.link;
+    await this.authService.activate(activationLink);
+    return res.redirect(`${process.env.URL_CLIENT}/activate/${activationLink}`);
   }
 
   @Get('/refresh')

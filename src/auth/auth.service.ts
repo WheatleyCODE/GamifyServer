@@ -17,7 +17,9 @@ export class AuthService {
 
   async registration(dto: RegistrationDto): Promise<UserData> {
     try {
-      const condidate = await this.usersService.findUserByEmail(dto.email);
+      const condidate = await this.usersService.findUserBy({
+        email: dto.email,
+      });
 
       if (condidate) {
         throw new HttpException(
@@ -27,12 +29,11 @@ export class AuthService {
       }
 
       const randomString = uuid.v4();
-      const link = `${process.env.API_URL}/api/activate/${randomString}`;
+      const link = `${process.env.URL_API}/api/auth/activate/${randomString}`;
       await this.mailService.sendActivationMail(dto.email, link);
 
       const user = await this.usersService.create(dto);
       const userDto = new UserDto(user);
-
       const tokens = this.tokensService.generateTokens({ ...userDto });
       this.tokensService.saveTokens(userDto.id, tokens);
 
@@ -60,10 +61,20 @@ export class AuthService {
     }
   }
 
-  async activate(): Promise<void> {
+  async activate(activationLink: string): Promise<void> {
     try {
+      const condidate = await this.usersService.findUserBy({
+        activationLink,
+      });
+
+      if (!condidate) {
+        throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
+      }
+
+      condidate.isActivated = true;
+      await condidate.save();
     } catch (e) {
-      console.log(e);
+      throw e;
     }
   }
 

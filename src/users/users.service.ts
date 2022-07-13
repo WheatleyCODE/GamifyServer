@@ -30,9 +30,9 @@ export class UsersService {
     }
   }
 
-  async findUserByEmail(email: string): Promise<UserDocument> {
+  async findUserBy(options: { [key: string]: any }): Promise<UserDocument> {
     try {
-      return await this.userModel.findOne({ email });
+      return await this.userModel.findOne({ ...options });
     } catch (e) {
       console.log(e);
     }
