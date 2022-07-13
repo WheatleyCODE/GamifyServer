@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { UserRole } from 'src/types/users';
+import { UserRoles } from 'src/types/users';
 
 export type UserDocument = User & Document;
 
@@ -15,8 +15,8 @@ export class User {
   @Prop({ required: true, type: String })
   nickName: string;
 
-  @Prop({ default: [UserRole.USER], type: [String] })
-  roles: UserRole[];
+  @Prop({ default: [UserRoles.USER], type: [String] })
+  roles: UserRoles[];
 
   @Prop({ required: true, type: String })
   email: string;
