@@ -8,4 +8,5 @@ export interface CreateUserOptions {
   email: string;
   password: string;
   nickName: string;
+  activationLink: string;
 }

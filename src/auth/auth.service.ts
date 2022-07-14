@@ -32,7 +32,6 @@ export class AuthService {
           HttpStatus.CONFLICT,
         );
       }
-
       const randomString = uuid.v4();
       const link = `${process.env.URL_API}/api/auth/activate/${randomString}`;
       await this.mailService.sendActivationMail(email, link);
@@ -41,6 +40,7 @@ export class AuthService {
       const newUser = await this.usersService.create({
         ...dto,
         password: hashPassword,
+        activationLink: randomString,
       });
 
       return await this.getTokensAndUserData(newUser);
