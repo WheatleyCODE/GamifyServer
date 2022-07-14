@@ -11,7 +11,7 @@ export abstract class Token {
       return userData as T;
     } catch (e) {
       throw new HttpException(
-        'Пользователь не авторизован (RefreshTokenService)',
+        'Пользователь не авторизован (Token)',
         HttpStatus.UNAUTHORIZED,
       );
     }
