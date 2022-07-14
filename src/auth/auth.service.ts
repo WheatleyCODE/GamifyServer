@@ -9,6 +9,7 @@ import { UserDto } from './dto/user.dto';
 import { UserData } from 'src/types/auth';
 import { LoginDto } from './dto/login.dto';
 import { UserDocument } from 'src/users/schemas/user.schema';
+import { TokensDocument } from 'src/tokens/schemas/tokens.schema';
 
 @Injectable()
 export class AuthService {
@@ -76,20 +77,25 @@ export class AuthService {
   }
 
   private async getTokensAndUserData(user: UserDocument): Promise<UserData> {
-    const userDto = new UserDto(user);
-    const tokens = this.tokensService.generateTokens({ ...userDto });
-    await this.tokensService.saveTokens(userDto.id, tokens);
+    try {
+      const userDto = new UserDto(user);
+      const tokens = this.tokensService.generateTokens({ ...userDto });
+      await this.tokensService.saveTokens(userDto.id, tokens);
 
-    return {
-      user: userDto,
-      ...tokens,
-    };
+      return {
+        user: userDto,
+        ...tokens,
+      };
+    } catch (e) {
+      throw e;
+    }
   }
 
-  async logout(): Promise<void> {
+  async logout(refreshToken: string): Promise<TokensDocument> {
     try {
+      return await this.tokensService.removeTokens(refreshToken);
     } catch (e) {
-      console.log(e);
+      throw e;
     }
   }
 
@@ -110,10 +116,34 @@ export class AuthService {
     }
   }
 
-  async refresh(): Promise<void> {
+  async refresh(refreshToken: string): Promise<UserData> {
     try {
+      if (!refreshToken) {
+        throw new HttpException(
+          'Пользователь не авторизован (Refresh)',
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
+
+      const userData = this.tokensService.validateRefreshToken(refreshToken);
+      const tokensDB = await this.tokensService.findTokensBy({ refreshToken });
+
+      if (!userData || !tokensDB) {
+        throw new HttpException(
+          'Пользователь не авторизован (!userData || !tokensDB)',
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
+
+      const user = await this.usersService.findUserBy({ _id: tokensDB.userId });
+
+      if (!user) {
+        throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
+      }
+
+      return await this.getTokensAndUserData(user);
     } catch (e) {
-      console.log(e);
+      throw e;
     }
   }
 }

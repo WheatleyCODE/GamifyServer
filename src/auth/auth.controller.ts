@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { TokensDocument } from 'src/tokens/schemas/tokens.schema';
 import { UserData } from 'src/types/auth';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
@@ -40,19 +41,37 @@ export class AuthController {
   }
 
   @Post('/logout')
-  logout(): Promise<void> {
-    return this.authService.logout();
+  async logout(
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<Response<TokensDocument>> {
+    const { refreshToken } = req.cookies;
+    const token = await this.authService.logout(refreshToken);
+    res.clearCookie('refreshToken');
+    return res.json(token);
   }
 
   @Get('/activate/:link')
-  async activate(@Req() req: Request, @Res() res: Response) {
+  async activate(@Req() req: Request, @Res() res: Response): Promise<void> {
     const activationLink = req.params.link;
     await this.authService.activate(activationLink);
     return res.redirect(`${process.env.URL_CLIENT}/activate/${activationLink}`);
   }
 
   @Get('/refresh')
-  refresh(): Promise<void> {
-    return this.authService.refresh();
+  async refresh(
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<Response<UserData>> {
+    const { refreshToken } = req.cookies;
+
+    const userData = await this.authService.refresh(refreshToken);
+
+    res.cookie('refreshToken', userData.refreshToken, {
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+    });
+
+    return res.json(userData);
   }
 }

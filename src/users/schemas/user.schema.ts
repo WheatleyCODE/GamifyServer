@@ -26,6 +26,9 @@ export class User {
 
   @Prop({ default: false, type: Boolean })
   isActivated: boolean;
+
+  @Prop({ type: String })
+  activationLink: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
