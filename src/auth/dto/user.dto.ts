@@ -7,8 +7,8 @@ export class UserDto {
   readonly isActivated: boolean;
   readonly roles: UserRoles[];
   readonly nickName: string;
-  readonly firstName: string;
-  readonly lastName: string;
+  readonly firstName: string | null;
+  readonly lastName: string | null;
   readonly activationLink: string;
 
   constructor(userDocument: UserDocument) {
