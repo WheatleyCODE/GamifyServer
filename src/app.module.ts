@@ -6,6 +6,7 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { TokensModule } from './tokens/tokens.module';
 import { MailModule } from './mail/mail.module';
+import { FilesModule } from './files/files.module';
 @Module({
   imports: [
     UsersModule,
@@ -14,6 +15,7 @@ import { MailModule } from './mail/mail.module';
     AuthModule,
     TokensModule,
     MailModule,
+    FilesModule,
   ],
   controllers: [AppController],
   providers: [],
