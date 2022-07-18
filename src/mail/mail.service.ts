@@ -25,8 +25,35 @@ export class MailService {
           <div>
             <h2>Для активации аккаунта перейдите по ссылке:</h2>
             <a href="${link}">
-              <h3>Для активации аккаунта перейдите по ссылке:</h2>
+              <h3>Ссылка для активации аккаунта</h2>
             </a>
+          </div>
+        `,
+      });
+    } catch {
+      throw new HttpException(
+        'Во время отправки письма произошла ошибка',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async sendResetPasswordMail(email: string, link: string): Promise<void> {
+    try {
+      await this.transporter.sendMail({
+        from: process.env.SMTP_USER,
+        to: email,
+        subject: `Смена пароля на "${process.env.URL_API}"`,
+        text: '',
+        html: `
+          <div>
+            <h2>Для смены пароля перейдите по ссылке:</h2>
+            <a href="${link}">
+              <h3>Ссылка для смены пароля</h2>
+            </a>
+            <div>
+              <h3>Если вы не запрашивали смену пароля, проигнорируйте письмо</h2>
+            </div>
           </div>
         `,
       });

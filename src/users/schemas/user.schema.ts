@@ -39,6 +39,10 @@ export class User {
   @ApiProperty({ description: 'Ссылка для активации акаунта' })
   @Prop({ type: String })
   activationLink: string;
+
+  @ApiProperty({ description: 'Cсылка для сброса пароля' })
+  @Prop({ type: String })
+  resetPasswordLink: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -6,7 +6,7 @@ import { UsersService } from 'src/users/users.service';
 import { RegistrationDto } from './dto/registration.dto';
 import { TokensService } from 'src/tokens/tokens.service';
 import { UserDto } from './dto/user.dto';
-import { UserData } from 'src/types/auth';
+import { ChangePassword, ResetPassword, UserData } from 'src/types/auth';
 import { LoginDto } from './dto/login.dto';
 import { UserDocument } from 'src/users/schemas/user.schema';
 import { TokensDocument } from 'src/tokens/schemas/tokens.schema';
@@ -142,6 +142,52 @@ export class AuthService {
       }
 
       return await this.getTokensAndUserData(user);
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  async resetPassword(email: string): Promise<ResetPassword> {
+    try {
+      const user = await this.usersService.findUserBy({ email });
+
+      if (!user) {
+        throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
+      }
+
+      const randomString = uuid.v4();
+      const link = `${process.env.URL_CLIENT}/reset/password/${randomString}`;
+      user.resetPasswordLink = randomString;
+      await user.save();
+      await this.mailService.sendResetPasswordMail(email, link);
+
+      return {
+        message: 'Было отправлено письмо',
+        email,
+        status: HttpStatus.OK,
+      };
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  async changePassword(password: string, resetPasswordLink: string): Promise<ChangePassword> {
+    try {
+      const user = await this.usersService.findUserBy({ resetPasswordLink });
+
+      if (!user) {
+        throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
+      }
+
+      const hashPassword = await bcrypt.hash(password, 6);
+      user.password = hashPassword;
+      user.resetPasswordLink = undefined;
+      await user.save();
+
+      return {
+        message: 'Пароль успешно изменен',
+        status: HttpStatus.OK,
+      };
     } catch (e) {
       throw e;
     }

@@ -1,4 +1,4 @@
-import { UserData } from './../types/auth';
+import { ChangePassword, ResetPassword, UserData } from './../types/auth';
 import { ValidationPipe } from './../pipes/validation.pipe';
 import {
   Body,
@@ -14,6 +14,8 @@ import { TokensDocument } from 'src/tokens/schemas/tokens.schema';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegistrationDto } from './dto/registration.dto';
+import { ResetPasswordDto } from './dto/resetPassword.dto';
+import { ChangePasswordDto } from './dto/changePassword';
 
 @Controller('/api/auth')
 export class AuthController {
@@ -84,5 +86,17 @@ export class AuthController {
     });
 
     return res.json(userData);
+  }
+
+  @Post('/reset/password')
+  @UsePipes(ValidationPipe)
+  resetPassword(@Body() { email }: ResetPasswordDto): Promise<ResetPassword> {
+    return this.authService.resetPassword(email);
+  }
+
+  @Post('/change/password')
+  @UsePipes(ValidationPipe)
+  changePassword(@Body() { password, resetPasswordLink }: ChangePasswordDto): Promise<ChangePassword> {
+    return this.authService.changePassword(password, resetPasswordLink);
   }
 }
