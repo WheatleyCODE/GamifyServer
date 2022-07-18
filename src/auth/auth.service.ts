@@ -156,7 +156,7 @@ export class AuthService {
       }
 
       const randomString = uuid.v4();
-      const link = `${process.env.URL_CLIENT}/reset/password/${randomString}`;
+      const link = `${process.env.URL_CLIENT}/change/password/${randomString}`;
       user.resetPasswordLink = randomString;
       await user.save();
       await this.mailService.sendResetPasswordMail(email, link);
