@@ -1,5 +1,8 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
+import { Roles } from 'src/decorators/roles-auth.decorator';
+// import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
+import { RolesGuard } from 'src/guards/roles.guard';
+import { UserRoles } from 'src/types/users';
 import { UserDocument } from './schemas/user.schema';
 import { UsersService } from './users.service';
 
@@ -7,7 +10,11 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
-  @UseGuards(JwtAuthGuard)
+  // Todo добавить Guard'ы
+  // @UseGuards(JwtAuthGuard)
+  // @Roles(UserRoles.ADMIN)
+  @Roles(UserRoles.USER)
+  @UseGuards(RolesGuard)
   @Get()
   async getAllUsers(): Promise<UserDocument[]> {
     return await this.userService.getAll();

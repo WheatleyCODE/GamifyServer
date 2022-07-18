@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
+import { ValidationPipe } from './../pipes/validation.pipe';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UsePipes,
+} from '@nestjs/common';
 import { Request, Response } from 'express';
 import { TokensDocument } from 'src/tokens/schemas/tokens.schema';
 import { UserData } from 'src/types/auth';
@@ -25,6 +34,7 @@ export class AuthController {
     return res.json(userData);
   }
 
+  @UsePipes(ValidationPipe)
   @Post('/login')
   async login(
     @Body() dto: LoginDto,
