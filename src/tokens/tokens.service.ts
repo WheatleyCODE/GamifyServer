@@ -5,7 +5,7 @@ import { RefreshTokenService } from './refresh-token/refresh-token.service';
 import { AccessTokenService } from './access-token/access-token.service';
 import { AccRefTokens } from 'src/types/tokens';
 import { Tokens, TokensDocument } from './schemas/tokens.schema';
-import { UserData } from 'src/types/auth';
+import { UserDto } from 'src/auth/dto/user.dto';
 
 @Injectable()
 export class TokensService {
@@ -66,17 +66,17 @@ export class TokensService {
     }
   }
 
-  validateAccessToken(token: string): UserData {
+  validateAccessToken(token: string): UserDto {
     try {
-      return this.accessTokenService.verify<UserData>(token);
+      return this.accessTokenService.verify<UserDto>(token);
     } catch (e) {
       throw e;
     }
   }
 
-  validateRefreshToken(token: string): UserData {
+  validateRefreshToken(token: string): UserDto {
     try {
-      return this.refreshTokenService.verify<UserData>(token);
+      return this.refreshTokenService.verify<UserDto>(token);
     } catch (e) {
       throw e;
     }

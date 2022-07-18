@@ -6,8 +6,8 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
+import { UserDto } from 'src/auth/dto/user.dto';
 import { AccessTokenService } from 'src/tokens/access-token/access-token.service';
-import { UserData } from 'src/types/auth';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
@@ -27,8 +27,8 @@ export class JwtAuthGuard implements CanActivate {
           HttpStatus.UNAUTHORIZED,
         );
       }
-      const userData = this.accessTokenService.verify<UserData>(token);
-      req.userData = userData;
+      const userDto = this.accessTokenService.verify<UserDto>(token);
+      req.userDto = userDto;
       return true;
     } catch (e) {
       throw e;

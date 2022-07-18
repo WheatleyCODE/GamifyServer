@@ -125,10 +125,10 @@ export class AuthService {
         );
       }
 
-      const userData = this.tokensService.validateRefreshToken(refreshToken);
+      const userDto = this.tokensService.validateRefreshToken(refreshToken);
       const tokensDB = await this.tokensService.findTokensBy({ refreshToken });
 
-      if (!userData || !tokensDB) {
+      if (!userDto || !tokensDB) {
         throw new HttpException(
           'Пользователь не авторизован (!userData || !tokensDB)',
           HttpStatus.UNAUTHORIZED,
