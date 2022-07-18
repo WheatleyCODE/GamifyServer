@@ -1,3 +1,4 @@
+import { UserData } from './../types/auth';
 import { ValidationPipe } from './../pipes/validation.pipe';
 import {
   Body,
@@ -10,7 +11,6 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { TokensDocument } from 'src/tokens/schemas/tokens.schema';
-import { UserData } from 'src/types/auth';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegistrationDto } from './dto/registration.dto';
@@ -19,6 +19,7 @@ import { RegistrationDto } from './dto/registration.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @UsePipes(ValidationPipe)
   @Post('/registration')
   async registration(
     @Body() dto: RegistrationDto,

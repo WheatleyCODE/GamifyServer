@@ -9,7 +9,6 @@ export class UserDto {
   readonly nickName: string;
   readonly firstName: string | null;
   readonly lastName: string | null;
-  readonly activationLink: string;
 
   constructor(userDocument: UserDocument) {
     this.email = userDocument.email;
@@ -19,6 +18,5 @@ export class UserDto {
     this.nickName = userDocument.nickName;
     this.firstName = userDocument.firstName || null;
     this.lastName = userDocument.lastName || null;
-    this.activationLink = userDocument.activationLink;
   }
 }
