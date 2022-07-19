@@ -176,7 +176,7 @@ export class AuthService {
       const user = await this.usersService.findUserBy({ resetPasswordLink });
 
       if (!user) {
-        throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
+        throw new HttpException('Пользователь не запрашивал смену пароля', HttpStatus.NOT_FOUND);
       }
 
       const hashPassword = await bcrypt.hash(password, 6);
