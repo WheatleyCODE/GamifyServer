@@ -50,9 +50,16 @@ export class AuthController {
 
   @Get('/activate/:link')
   async activate(@Req() req: Request, @Res() res: Response): Promise<void> {
-    const activationLink = req.params.link;
-    await this.authService.activate(activationLink);
-    return res.redirect(`${process.env.URL_CLIENT}/activate/${activationLink}`);
+    try {
+      const activationLink = req.params.link;
+      await this.authService.activate(activationLink);
+      return res.redirect(`${process.env.URL_CLIENT}/activate/${activationLink}`);
+    } catch (e) {
+      // * Если пользователь уже использовал
+      // * одноразовый вход по ссылке активации
+      // * Перешел по ссылке для активации в письме еще раз
+      return res.redirect(`${process.env.URL_CLIENT}/login`);
+    }
   }
 
   @Get('/refresh')
