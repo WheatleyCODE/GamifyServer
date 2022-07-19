@@ -10,10 +10,7 @@ export abstract class Token {
       const userData = this.jwtService.verify(token);
       return userData as T;
     } catch (e) {
-      throw new HttpException(
-        'Пользователь не авторизован (Token)',
-        HttpStatus.UNAUTHORIZED,
-      );
+      throw new HttpException('Пользователь не авторизован (Token)', HttpStatus.UNAUTHORIZED);
     }
   }
 

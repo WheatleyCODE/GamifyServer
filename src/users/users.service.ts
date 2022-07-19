@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from './schemas/user.schema';
@@ -14,7 +14,7 @@ export class UsersService {
         ...options,
       });
     } catch (e) {
-      console.log(e);
+      throw new HttpException('Ошибка при создании пользователя', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -22,7 +22,7 @@ export class UsersService {
     try {
       return await this.userModel.find();
     } catch (e) {
-      console.log(e);
+      throw new HttpException('Ошибка при нахождении пользователей', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -30,7 +30,7 @@ export class UsersService {
     try {
       return await this.userModel.findOne({ ...options });
     } catch (e) {
-      console.log(e);
+      throw new HttpException('Ошибка при нахождении пользователя', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

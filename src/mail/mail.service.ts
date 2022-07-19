@@ -31,10 +31,7 @@ export class MailService {
         `,
       });
     } catch {
-      throw new HttpException(
-        'Во время отправки письма произошла ошибка',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException('Во время отправки письма произошла ошибка', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -58,10 +55,7 @@ export class MailService {
         `,
       });
     } catch {
-      throw new HttpException(
-        'Во время отправки письма произошла ошибка',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException('Во время отправки письма произошла ошибка', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

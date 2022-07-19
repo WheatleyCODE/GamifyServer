@@ -9,6 +9,7 @@ import { RegistrationDto } from './dto/registration.dto';
 import { ResetPasswordDto } from './dto/resetPassword.dto';
 import { ChangePasswordDto } from './dto/changePassword';
 import { loginByActivationLinkDto } from './dto/loginByActivationLinkDto';
+import { setRefTokenInCookie } from 'src/utils/setRefTokenInCookie';
 
 @Controller('/api/auth')
 export class AuthController {
@@ -19,10 +20,7 @@ export class AuthController {
   async registration(@Body() dto: RegistrationDto, @Res() res: Response): Promise<Response<UserData>> {
     const userData = await this.authService.registration(dto);
 
-    res.cookie('refreshToken', userData.refreshToken, {
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-      httpOnly: true,
-    });
+    setRefTokenInCookie(res, userData.refreshToken);
 
     return res.json(userData);
   }
@@ -32,10 +30,7 @@ export class AuthController {
   async login(@Body() dto: LoginDto, @Res() res: Response): Promise<Response<UserData>> {
     const userData = await this.authService.login(dto);
 
-    res.cookie('refreshToken', userData.refreshToken, {
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-      httpOnly: true,
-    });
+    setRefTokenInCookie(res, userData.refreshToken);
 
     return res.json(userData);
   }
@@ -57,7 +52,7 @@ export class AuthController {
     } catch (e) {
       // * Если пользователь уже использовал
       // * одноразовый вход по ссылке активации
-      // * Перешел по ссылке для активации в письме еще раз
+      // * (Перешел по ссылке для активации в письме еще раз)
       return res.redirect(`${process.env.URL_CLIENT}/login`);
     }
   }
@@ -65,13 +60,9 @@ export class AuthController {
   @Get('/refresh')
   async refresh(@Req() req: Request, @Res() res: Response): Promise<Response<UserData>> {
     const { refreshToken } = req.cookies;
-
     const userData = await this.authService.refresh(refreshToken);
 
-    res.cookie('refreshToken', userData.refreshToken, {
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-      httpOnly: true,
-    });
+    setRefTokenInCookie(res, userData.refreshToken);
 
     return res.json(userData);
   }
@@ -89,13 +80,14 @@ export class AuthController {
   }
 
   @Post('/login/activation-link')
-  async loginByActivationLink(@Body() dto: loginByActivationLinkDto, @Res() res: Response): Promise<Response<UserData>> {
+  @UsePipes(ValidationPipe)
+  async loginByActivationLink(
+    @Body() dto: loginByActivationLinkDto,
+    @Res() res: Response,
+  ): Promise<Response<UserData>> {
     const userData = await this.authService.loginByActivationLink(dto.activationLink);
 
-    res.cookie('refreshToken', userData.refreshToken, {
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-      httpOnly: true,
-    });
+    setRefTokenInCookie(res, userData.refreshToken);
 
     return res.json(userData);
   }

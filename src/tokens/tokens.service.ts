@@ -37,10 +37,7 @@ export class TokensService {
 
       return await this.tokensModel.create({ userId, ...tokens });
     } catch (e) {
-      throw new HttpException(
-        'Ошибка при сохранении токенов',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException('Ошибка при сохранении токенов', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -48,10 +45,7 @@ export class TokensService {
     try {
       return await this.tokensModel.findOneAndRemove({ refreshToken });
     } catch (e) {
-      throw new HttpException(
-        'Ошибка при удалении токенов',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException('Ошибка при удалении токенов', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -59,10 +53,7 @@ export class TokensService {
     try {
       return await this.tokensModel.findOne({ ...options });
     } catch (e) {
-      throw new HttpException(
-        'Ошибка при поиске токенов',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException('Ошибка при поиске токенов', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 

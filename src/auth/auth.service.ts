@@ -27,11 +27,9 @@ export class AuthService {
       });
 
       if (user) {
-        throw new HttpException(
-          'Пользователь с таким Email уже сущетсвует',
-          HttpStatus.CONFLICT,
-        );
+        throw new HttpException('Пользователь с такой почтой уже сущетсвует', HttpStatus.CONFLICT);
       }
+
       const randomString = uuid.v4();
       const link = `${process.env.URL_API}/api/auth/activate/${randomString}`;
       await this.mailService.sendActivationMail(email, link);
@@ -55,19 +53,13 @@ export class AuthService {
       const user = await this.usersService.findUserBy({ email });
 
       if (!user) {
-        throw new HttpException(
-          'Неверная почта или пароль',
-          HttpStatus.BAD_REQUEST,
-        );
+        throw new HttpException('Неверная почта или пароль', HttpStatus.BAD_REQUEST);
       }
 
       const isPassEqueals = await bcrypt.compare(password, user.password);
 
       if (!isPassEqueals) {
-        throw new HttpException(
-          'Неверная почта или пароль',
-          HttpStatus.BAD_REQUEST,
-        );
+        throw new HttpException('Неверная почта или пароль', HttpStatus.BAD_REQUEST);
       }
 
       return await this.getTokensAndUserData(user);
@@ -119,20 +111,14 @@ export class AuthService {
   async refresh(refreshToken: string): Promise<UserData> {
     try {
       if (!refreshToken) {
-        throw new HttpException(
-          'Пользователь не авторизован (Refresh)',
-          HttpStatus.UNAUTHORIZED,
-        );
+        throw new HttpException('Пользователь не авторизован (Refresh)', HttpStatus.UNAUTHORIZED);
       }
 
       const userDto = this.tokensService.validateRefreshToken(refreshToken);
       const tokensDB = await this.tokensService.findTokensBy({ refreshToken });
 
       if (!userDto || !tokensDB) {
-        throw new HttpException(
-          'Пользователь не авторизован (!userData || !tokensDB)',
-          HttpStatus.UNAUTHORIZED,
-        );
+        throw new HttpException('Пользователь не авторизован (!userData || !tokensDB)', HttpStatus.UNAUTHORIZED);
       }
 
       const user = await this.usersService.findUserBy({ _id: tokensDB.userId });
@@ -198,10 +184,7 @@ export class AuthService {
       const user = await this.usersService.findUserBy({ activationLink });
 
       if (!user) {
-        throw new HttpException(
-          'Пользователь не найден',
-          HttpStatus.NOT_FOUND,
-        );
+        throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
       }
 
       user.activationLink = undefined;
