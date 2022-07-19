@@ -1,14 +1,6 @@
 import { ChangePassword, ResetPassword, UserData } from './../types/auth';
 import { ValidationPipe } from './../pipes/validation.pipe';
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Req,
-  Res,
-  UsePipes,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res, UsePipes } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { TokensDocument } from 'src/tokens/schemas/tokens.schema';
 import { AuthService } from './auth.service';
@@ -16,6 +8,7 @@ import { LoginDto } from './dto/login.dto';
 import { RegistrationDto } from './dto/registration.dto';
 import { ResetPasswordDto } from './dto/resetPassword.dto';
 import { ChangePasswordDto } from './dto/changePassword';
+import { loginByActivationLinkDto } from './dto/loginByActivationLinkDto';
 
 @Controller('/api/auth')
 export class AuthController {
@@ -23,10 +16,7 @@ export class AuthController {
 
   @UsePipes(ValidationPipe)
   @Post('/registration')
-  async registration(
-    @Body() dto: RegistrationDto,
-    @Res() res: Response,
-  ): Promise<Response<UserData>> {
+  async registration(@Body() dto: RegistrationDto, @Res() res: Response): Promise<Response<UserData>> {
     const userData = await this.authService.registration(dto);
 
     res.cookie('refreshToken', userData.refreshToken, {
@@ -39,10 +29,7 @@ export class AuthController {
 
   @UsePipes(ValidationPipe)
   @Post('/login')
-  async login(
-    @Body() dto: LoginDto,
-    @Res() res: Response,
-  ): Promise<Response<UserData>> {
+  async login(@Body() dto: LoginDto, @Res() res: Response): Promise<Response<UserData>> {
     const userData = await this.authService.login(dto);
 
     res.cookie('refreshToken', userData.refreshToken, {
@@ -54,10 +41,7 @@ export class AuthController {
   }
 
   @Post('/logout')
-  async logout(
-    @Req() req: Request,
-    @Res() res: Response,
-  ): Promise<Response<TokensDocument>> {
+  async logout(@Req() req: Request, @Res() res: Response): Promise<Response<TokensDocument>> {
     const { refreshToken } = req.cookies;
     const token = await this.authService.logout(refreshToken);
     res.clearCookie('refreshToken');
@@ -72,10 +56,7 @@ export class AuthController {
   }
 
   @Get('/refresh')
-  async refresh(
-    @Req() req: Request,
-    @Res() res: Response,
-  ): Promise<Response<UserData>> {
+  async refresh(@Req() req: Request, @Res() res: Response): Promise<Response<UserData>> {
     const { refreshToken } = req.cookies;
 
     const userData = await this.authService.refresh(refreshToken);
@@ -98,5 +79,17 @@ export class AuthController {
   @UsePipes(ValidationPipe)
   changePassword(@Body() { password, resetPasswordLink }: ChangePasswordDto): Promise<ChangePassword> {
     return this.authService.changePassword(password, resetPasswordLink);
+  }
+
+  @Post('/login/activation-link')
+  async loginByActivationLink(@Body() dto: loginByActivationLinkDto, @Res() res: Response): Promise<Response<UserData>> {
+    const userData = await this.authService.loginByActivationLink(dto.activationLink);
+
+    res.cookie('refreshToken', userData.refreshToken, {
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+    });
+
+    return res.json(userData);
   }
 }

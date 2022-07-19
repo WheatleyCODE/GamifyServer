@@ -192,4 +192,24 @@ export class AuthService {
       throw e;
     }
   }
+
+  async loginByActivationLink(activationLink: string): Promise<UserData> {
+    try {
+      const user = await this.usersService.findUserBy({ activationLink });
+
+      if (!user) {
+        throw new HttpException(
+          'Пользователь не найден',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      user.activationLink = undefined;
+      await user.save();
+
+      return await this.getTokensAndUserData(user);
+    } catch (e) {
+      throw e;
+    }
+  }
 }
