@@ -7,6 +7,9 @@ import { AuthModule } from './auth/auth.module';
 import { TokensModule } from './tokens/tokens.module';
 import { MailModule } from './mail/mail.module';
 import { FilesModule } from './files/files.module';
+import { TrackModule } from './track/track.module';
+import { CommentModule } from './comment/comment.module';
+
 @Module({
   imports: [
     UsersModule,
@@ -16,6 +19,8 @@ import { FilesModule } from './files/files.module';
     TokensModule,
     MailModule,
     FilesModule,
+    TrackModule,
+    CommentModule,
   ],
   controllers: [AppController],
   providers: [],
