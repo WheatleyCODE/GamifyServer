@@ -9,6 +9,7 @@ import { MailModule } from './mail/mail.module';
 import { FilesModule } from './files/files.module';
 import { TrackModule } from './track/track.module';
 import { CommentModule } from './comment/comment.module';
+import { AlbumModule } from './album/album.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { CommentModule } from './comment/comment.module';
     FilesModule,
     TrackModule,
     CommentModule,
+    AlbumModule,
   ],
   controllers: [AppController],
   providers: [],

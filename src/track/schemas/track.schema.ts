@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
+import { Album } from 'src/album/schemas/album.schema';
 import { TrackComment } from 'src/comment/schemas/trackComment.schema';
 import { User } from 'src/users/schemas/user.schema';
 
@@ -27,6 +28,9 @@ export class Track {
 
   @Prop({ required: true, type: String })
   audio: string;
+
+  @Prop({ type: Types.ObjectId, ref: 'Album' })
+  album: Album;
 
   @Prop({ type: [Types.ObjectId], ref: 'TrackComment' })
   comments: TrackComment[];

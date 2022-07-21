@@ -58,6 +58,16 @@ export class TrackService extends MongoService {
     }
   }
 
+  async getAllTrackByIds(ids: string[]): Promise<TrackDocument[]> {
+    try {
+      const tracks = await this.findAllByIds<TrackDocument>(ids);
+      checkAndThrowErr(tracks, 'Треки');
+      return tracks;
+    } catch (e) {
+      throw e;
+    }
+  }
+
   async deleteOneTrack(id: string): Promise<TrackDocument> {
     try {
       const track = await this.deleteOneById<TrackDocument>(id);
