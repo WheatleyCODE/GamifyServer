@@ -26,7 +26,7 @@ export class Track {
   image: string;
 
   @Prop({ required: true, type: String })
-  audio: number;
+  audio: string;
 
   @Prop({ type: [Types.ObjectId], ref: 'TrackComment' })
   comments: TrackComment[];

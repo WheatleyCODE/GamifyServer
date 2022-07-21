@@ -1,61 +1,90 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { MongoService } from 'src/core/MongoService';
+import { createTrackOptions } from 'src/types/tracks';
+import { checkAndThrowErr } from 'src/utils/checkAndThrowErr';
 import { CreateTrackDto } from './dto/createTrackDto';
 import { Track, TrackDocument } from './schemas/track.schema';
 
 @Injectable()
-export class TrackService {
+export class TrackService extends MongoService {
   // Todo Повторение запросов как и в юзере можено вынести выше
   // Todo В схеме пользователя и в схеме трека написаны поля типа стринг но они могут быть Null
 
-  constructor(@InjectModel(Track.name) private readonly trackModel: Model<TrackDocument>) {}
+  constructor(@InjectModel(Track.name) private readonly trackModel: Model<TrackDocument>) {
+    super(trackModel);
+  }
 
-  async create(options: CreateTrackDto): Promise<TrackDocument> {
+  async createTrack(options: CreateTrackDto): Promise<TrackDocument> {
     try {
       const { name, author, userId, text } = options;
+      const track = await this.findOneBy<TrackDocument>({ name });
 
-      return await this.trackModel.create({
+      if (track) {
+        throw new HttpException('Трек с таким названием уже существует', HttpStatus.CONFLICT);
+      }
+
+      const newTrack = this.createOne<TrackDocument, createTrackOptions>({
+        user: userId,
         name,
         author,
         text,
-        user: userId,
-        audio: 'Нужно будет создать ссылку на трек',
+        image: 'Картинки нет',
+        audio: 'Аудио тоже нет',
       });
+
+      return newTrack;
     } catch (e) {
-      throw new HttpException('Ошибка при создании трека', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw e;
     }
   }
 
-  async getAll(): Promise<TrackDocument[]> {
+  async getAllTracks(): Promise<TrackDocument[]> {
     try {
-      return await this.trackModel.find();
+      return await this.findAll<TrackDocument>();
     } catch (e) {
-      throw new HttpException('Ошибка при нахождении треков', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw e;
     }
   }
 
-  async findTrackBy(options: { [key: string]: any }): Promise<TrackDocument> {
+  async getOneTrack(id: string): Promise<TrackDocument> {
     try {
-      return await this.trackModel.findOne({ ...options });
+      const track = await this.findOneById<TrackDocument>(id);
+      checkAndThrowErr(track, 'Трек');
+      return track;
     } catch (e) {
-      throw new HttpException('Ошибка при нахождении трека', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw e;
     }
   }
 
-  async deleteOne(id: string): Promise<TrackDocument> {
+  async deleteOneTrack(id: string): Promise<TrackDocument> {
     try {
-      return await this.trackModel.findByIdAndDelete(id);
+      const track = await this.deleteOneById<TrackDocument>(id);
+      checkAndThrowErr(track, 'Трек');
+      return track;
     } catch (e) {
-      throw new HttpException('Ошибка при удалении трека', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw e;
     }
   }
 
-  async updateOne(id: string, options: CreateTrackDto): Promise<TrackDocument> {
+  async updateOneTrack(id: string, options: CreateTrackDto): Promise<TrackDocument> {
     try {
-      return await this.trackModel.findByIdAndUpdate(id, options);
+      const { name, author, userId, text } = options;
+      const track = await this.updateOneById<TrackDocument, createTrackOptions>(id, {
+        user: userId,
+        name,
+        author,
+        text,
+        image: 'Картинки нет',
+        audio: 'Аудио тоже нет',
+      });
+
+      checkAndThrowErr(track, 'Трек');
+
+      return track;
     } catch (e) {
-      throw new HttpException('Ошибка при обновлении трека', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw e;
     }
   }
 }

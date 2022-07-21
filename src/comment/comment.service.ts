@@ -17,7 +17,7 @@ export class CommentService {
   async createTrackComment(options: CreateTrackCommentDto): Promise<TrackCommentDocument> {
     try {
       const { userId, trackId, text } = options;
-      const track = await this.trackService.findTrackBy({ _id: trackId });
+      const track = await this.trackService.getOneTrack(trackId);
       const comment = await this.trackCommentModel.create({ user: userId, track: trackId, text });
       track.comments.push(comment._id);
       await track.save();

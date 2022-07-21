@@ -12,28 +12,28 @@ export class TrackController {
   // @UseGuards(JwtAuthGuard)
   @Get()
   getAllTracks(): Promise<TrackDocument[]> {
-    return this.trackService.getAll();
+    return this.trackService.getAllTracks();
   }
 
   @Get(':id')
   getOneTrack(@Param() param: { id: string }): Promise<TrackDocument> {
-    return this.trackService.findTrackBy({ _id: param.id });
+    return this.trackService.getOneTrack(param.id);
   }
 
   // Todo валидация
   @Post()
   createTrack(@Body() dto: CreateTrackDto): Promise<TrackDocument> {
-    return this.trackService.create(dto);
+    return this.trackService.createTrack(dto);
   }
 
   @Delete(':id')
   deleteOneTrack(@Param() param: { id: string }): Promise<TrackDocument> {
-    return this.trackService.deleteOne(param.id);
+    return this.trackService.deleteOneTrack(param.id);
   }
 
   // Todo валидация
   @Put(':id')
   updateOneTrack(@Param() param: { id: string }, @Body() dto: CreateTrackDto): Promise<TrackDocument> {
-    return this.trackService.updateOne(param.id, dto);
+    return this.trackService.updateOneTrack(param.id, dto);
   }
 }
