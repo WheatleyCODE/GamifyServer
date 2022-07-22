@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { MongoService } from 'src/core/MongoService';
+import { FileService, FileType } from 'src/files/file.service';
 import { createTrackOptions } from 'src/types/tracks';
 import { checkAndThrowErr } from 'src/utils/checkAndThrowErr';
 import { CreateTrackDto } from './dto/createTrackDto';
@@ -9,14 +10,18 @@ import { Track, TrackDocument } from './schemas/track.schema';
 
 @Injectable()
 export class TrackService extends MongoService {
-  // Todo Повторение запросов как и в юзере можено вынести выше
-  // Todo В схеме пользователя и в схеме трека написаны поля типа стринг но они могут быть Null
-
-  constructor(@InjectModel(Track.name) private readonly trackModel: Model<TrackDocument>) {
+  constructor(
+    @InjectModel(Track.name) private readonly trackModel: Model<TrackDocument>,
+    private readonly fileService: FileService,
+  ) {
     super(trackModel);
   }
 
-  async createTrack(options: CreateTrackDto): Promise<TrackDocument> {
+  async createTrack(
+    options: CreateTrackDto,
+    image: Express.Multer.File,
+    audio: Express.Multer.File,
+  ): Promise<TrackDocument> {
     try {
       const { name, author, userId, text } = options;
       const track = await this.findOneBy<TrackDocument>({ name });
@@ -25,13 +30,16 @@ export class TrackService extends MongoService {
         throw new HttpException('Трек с таким названием уже существует', HttpStatus.CONFLICT);
       }
 
+      const pathImage = await this.fileService.createFile(FileType.IMAGE, image);
+      const pathAudio = await this.fileService.createFile(FileType.AUDIO, audio);
+
       const newTrack = this.createOne<TrackDocument, createTrackOptions>({
         user: userId,
         name,
         author,
         text,
-        image: 'Картинки нет',
-        audio: 'Аудио тоже нет',
+        image: pathImage,
+        audio: pathAudio,
       });
 
       return newTrack;
@@ -40,9 +48,9 @@ export class TrackService extends MongoService {
     }
   }
 
-  async getAllTracks(): Promise<TrackDocument[]> {
+  async getAllTracks(count = 10, offset = 0): Promise<TrackDocument[]> {
     try {
-      return await this.findAll<TrackDocument>();
+      return await this.findAll<TrackDocument>({ count, offset });
     } catch (e) {
       throw e;
     }
@@ -52,6 +60,7 @@ export class TrackService extends MongoService {
     try {
       const track = await this.findOneById<TrackDocument>(id);
       checkAndThrowErr(track, 'Трек');
+      await track.populate('comments');
       return track;
     } catch (e) {
       throw e;
@@ -95,6 +104,26 @@ export class TrackService extends MongoService {
       return track;
     } catch (e) {
       throw e;
+    }
+  }
+
+  async listen(id: string): Promise<void> {
+    try {
+      const track = await this.trackModel.findById(id);
+      track.listen += 1;
+      await track.save();
+    } catch (e) {
+      throw new HttpException('Ошибка при прослушивании трека', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async search(query: string): Promise<TrackDocument[]> {
+    try {
+      return await this.trackModel.find({
+        name: { $regex: new RegExp(query, 'i') },
+      });
+    } catch (e) {
+      throw new HttpException('Ошибка при поиске треков', HttpStatus.BAD_REQUEST);
     }
   }
 }

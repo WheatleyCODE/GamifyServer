@@ -12,9 +12,6 @@ import { TrackService } from 'src/track/track.service';
 
 @Injectable()
 export class AlbumService extends MongoService {
-  // Todo Повторение запросов как и в юзере можено вынести выше
-  // Todo В схеме пользователя и в схеме трека написаны поля типа стринг но они могут быть Null
-
   constructor(
     @InjectModel(Album.name) private readonly albumModel: Model<AlbumDocument>,
     private readonly trackService: TrackService,
@@ -56,6 +53,8 @@ export class AlbumService extends MongoService {
     try {
       const album = await this.findOneById<AlbumDocument>(id);
       checkAndThrowErr(album, 'Альбом');
+      await album.populate('comments');
+      await album.populate('tracks');
       return album;
     } catch (e) {
       throw e;
@@ -102,9 +101,7 @@ export class AlbumService extends MongoService {
         track.save();
       });
 
-      // Todo Пофиксить
-      const a = trackIds as any[];
-      album.tracks = [...a];
+      album.tracks = [...trackIds] as any[];
       await album.save();
 
       return album;

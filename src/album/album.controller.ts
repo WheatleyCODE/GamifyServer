@@ -11,7 +11,6 @@ export class AlbumController {
   constructor(private readonly albumService: AlbumService) {}
 
   // Todo гварды
-  // Todo Прокачать удаление Треков и Альбомов
   // @UseGuards(JwtAuthGuard)
   @Get()
   getAllAlbums(): Promise<AlbumDocument[]> {
@@ -41,6 +40,7 @@ export class AlbumController {
     return this.albumService.addTrack(dto);
   }
 
+  // Todo Прокачать удаление Треков и Альбомов
   @Delete(':id')
   deleteOneAlbum(@Param() param: { id: string }): Promise<AlbumDocument> {
     return this.albumService.deleteOneAlbum(param.id);

@@ -72,7 +72,7 @@ export class AuthService {
     try {
       const userDto = new UserDto(user);
       const tokens = this.tokensService.generateTokens({ ...userDto });
-      await this.tokensService.saveTokens(userDto.id, tokens);
+      await this.tokensService.saveTokens(userDto._id, tokens);
 
       return {
         user: userDto,

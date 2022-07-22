@@ -20,8 +20,12 @@ export abstract class MongoService {
     }
   }
 
-  protected async findAll<T>(): Promise<T[]> {
+  protected async findAll<T>(pag?: { count: number; offset: number }): Promise<T[]> {
     try {
+      if (pag) {
+        return await this.model.find().skip(pag.offset).limit(pag.count);
+      }
+
       return await this.model.find();
     } catch (e) {
       throw new HttpException(`Ошибка при поиске всех ${this.model.modelName}`, HttpStatus.INTERNAL_SERVER_ERROR);

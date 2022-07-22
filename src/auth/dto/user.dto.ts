@@ -3,7 +3,7 @@ import { UserDocument } from 'src/users/schemas/user.schema';
 
 export class UserDto {
   readonly email: string;
-  readonly id: string;
+  readonly _id: string;
   readonly isActivated: boolean;
   readonly roles: UserRoles[];
   readonly nickName: string;
@@ -12,7 +12,7 @@ export class UserDto {
 
   constructor(userDocument: UserDocument) {
     this.email = userDocument.email;
-    this.id = userDocument._id;
+    this._id = userDocument._id;
     this.isActivated = userDocument.isActivated;
     this.roles = userDocument.roles;
     this.nickName = userDocument.nickName;
