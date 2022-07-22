@@ -1,7 +1,7 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Roles } from 'src/decorators/roles-auth.decorator';
-// import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
+import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { RolesGuard } from 'src/guards/roles.guard';
 import { UserRoles } from 'src/types/users';
 import { User, UserDocument } from './schemas/user.schema';
@@ -11,9 +11,8 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
-  // Todo добавить Guard'ы
-  // @UseGuards(JwtAuthGuard)
-  // @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.ADMIN)
   @ApiOperation({ summary: 'Получение всех пользователей' })
   @ApiResponse({ status: 200, type: [User] })
   @Roles(UserRoles.USER)

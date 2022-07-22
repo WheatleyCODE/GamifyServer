@@ -7,9 +7,11 @@ import { TrackComment, TrackCommentSchema } from './schemas/trackComment.schema'
 import { AlbumModule } from 'src/album/album.module';
 import { AlbumComment, AlbumCommentSchema } from './schemas/albumComment.schema';
 import { AlbumCommentService } from './albumComment.service';
+import { TokensModule } from 'src/tokens/tokens.module';
 
 @Module({
   imports: [
+    TokensModule,
     TrackModule,
     AlbumModule,
     MongooseModule.forFeature([{ name: TrackComment.name, schema: TrackCommentSchema }]),
