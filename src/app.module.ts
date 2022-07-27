@@ -13,6 +13,7 @@ import { CommentModule } from './comment/comment.module';
 import { AlbumModule } from './album/album.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { StorageModule } from './storage/storage.module';
+import { FolderModule } from './folder/folder.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { StorageModule } from './storage/storage.module';
     CommentModule,
     AlbumModule,
     StorageModule,
+    FolderModule,
   ],
   controllers: [AppController],
   providers: [],

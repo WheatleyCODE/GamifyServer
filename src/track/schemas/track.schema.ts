@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { Album } from 'src/album/schemas/album.schema';
 import { TrackComment } from 'src/comment/schemas/trackComment.schema';
+import { Folder } from 'src/folder/schemas/folder.schema';
 import { ItemTypes } from 'src/types/storage';
 import { User } from 'src/users/schemas/user.schema';
 
@@ -38,6 +39,9 @@ export class Track {
 
   @Prop({ type: [Types.ObjectId], ref: 'TrackComment' })
   comments: TrackComment[];
+
+  @Prop({ type: Types.ObjectId, ref: 'Folder' })
+  parent: Folder;
 }
 
 export const TrackSchema = SchemaFactory.createForClass(Track);

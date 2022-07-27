@@ -25,13 +25,13 @@ export class TrackController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  getAllTracks(@Query('count') count: number, @Query('offset') offset: number): Promise<Track[]> {
+  getAllTracks(@Query('count') count: number, @Query('offset') offset: number): Promise<TrackDocument[]> {
     return this.trackService.getAllTracks(count, offset);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-  getOneTrack(@Param() param: { id: string }): Promise<Track> {
+  getOneTrack(@Param() param: { id: string }): Promise<TrackDocument> {
     return this.trackService.getOneTrack(param.id);
   }
 

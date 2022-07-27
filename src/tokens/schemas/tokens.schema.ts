@@ -1,12 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
+import { User } from 'src/users/schemas/user.schema';
 
 export type TokensDocument = Tokens & Document;
 
 @Schema()
 export class Tokens {
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
-  user: string;
+  user: User;
 
   @Prop({ type: String, required: true })
   accessToken: string;
