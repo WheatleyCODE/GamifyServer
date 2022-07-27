@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { MongoService } from 'src/core/MongoService';
 import { FilesService, FileType } from 'src/files/files.service';
 import { StorageService } from 'src/storage/storage.service';
@@ -25,27 +25,24 @@ export class TrackService extends MongoService {
     audio: Express.Multer.File,
   ): Promise<TrackDocument> {
     try {
-      const { name, author, userId, text, parent, album } = options;
+      const { name, author, userId, text, parentId, albumId } = options;
 
       const pathImage = await this.filesService.createFile(FileType.IMAGE, image);
       const pathAudio = await this.filesService.createFile(FileType.AUDIO, audio);
 
       const newTrack = await this.createOne<TrackDocument, createTrackOptions>({
-        user: userId,
+        user: new Types.ObjectId(userId),
         name,
         author,
         text,
         image: pathImage,
         audio: pathAudio,
+        parent: parentId ? new Types.ObjectId(parentId) : undefined,
+        album: albumId ? new Types.ObjectId(albumId) : undefined,
       });
 
-      if (parent) {
-        newTrack.parent = parent as any;
-        await newTrack.save();
-      }
-
-      if (album) {
-        // Todo альбом чуть позже
+      if (albumId) {
+        // Todo Добавить в альбом
       }
 
       const storage = await this.storageService.getStorageByUserId(userId);
@@ -101,7 +98,7 @@ export class TrackService extends MongoService {
     try {
       const { name, author, userId, text } = options;
       const track = await this.updateOneById<TrackDocument, createTrackOptions>(id, {
-        user: userId,
+        user: new Types.ObjectId(userId),
         name,
         author,
         text,

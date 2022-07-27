@@ -13,9 +13,6 @@ export class CreateTrackDto {
   @IsString({ message: 'Должно быть строкой' })
   readonly text: string;
 
-  @IsString({ message: 'Должно быть строкой' })
-  readonly parent: string | undefined;
-
-  @IsString({ message: 'Должно быть строкой' })
-  readonly album: string | undefined;
+  readonly parentId: string | undefined;
+  readonly albumId: string | undefined;
 }
