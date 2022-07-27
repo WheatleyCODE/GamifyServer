@@ -1,4 +1,7 @@
+import { Types } from 'mongoose';
+
 export interface CreateFolderOptions {
-  user: string;
+  user: Types.ObjectId;
   name: string;
+  parent?: Types.ObjectId;
 }

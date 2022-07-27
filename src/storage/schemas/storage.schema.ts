@@ -15,10 +15,13 @@ export class Storage {
   usedSpace: number;
 
   @Prop({ type: [Types.ObjectId], ref: 'Folder' })
-  folders: string[];
+  folders: Types.ObjectId[];
 
   @Prop({ type: [Types.ObjectId], ref: 'Track' })
-  tracks: string[];
+  tracks: Types.ObjectId[];
+
+  @Prop({ type: [Types.ObjectId], ref: 'Album' })
+  albums: Types.ObjectId[];
 }
 
 export const StorageSchema = SchemaFactory.createForClass(Storage);

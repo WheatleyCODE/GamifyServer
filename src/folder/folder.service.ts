@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { MongoService } from 'src/core/MongoService';
 import { StorageService } from 'src/storage/storage.service';
 import { CreateFolderOptions } from 'src/types/folder';
@@ -18,16 +18,21 @@ export class FolderService extends MongoService {
 
   async createFolder(dto: CreateFolderDto): Promise<FolderDocument> {
     try {
-      const { userId, name } = dto;
+      const { storageId, name, parentId } = dto;
 
+      console.log(parentId);
+
+      const storage = await this.storageService.getOneStorage(storageId);
       const newFolder = await this.createOne<FolderDocument, CreateFolderOptions>({
-        user: userId,
+        user: storage.user,
         name,
+        parent: parentId ? new Types.ObjectId(parentId) : undefined,
       });
 
-      const storage = await this.storageService.getStorageByUserId(userId);
-      storage.folders.push(newFolder._id);
-      await storage.save();
+      if (!parentId) {
+        storage.folders.push(newFolder._id);
+        await storage.save();
+      }
 
       return newFolder;
     } catch (e) {

@@ -2,8 +2,11 @@ import { IsString } from 'class-validator';
 
 export class CreateFolderDto {
   @IsString({ message: 'Должно быть строкой' })
-  readonly userId: string;
+  readonly storageId: string;
 
   @IsString({ message: 'Должно быть строкой' })
   readonly name: string;
+
+  // @IsString({ message: 'Должно быть строкой' })
+  readonly parentId: string | undefined;
 }
