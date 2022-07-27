@@ -9,7 +9,7 @@ export enum FileType {
 }
 
 @Injectable()
-export class FileService {
+export class FilesService {
   async createFile(type: FileType, file: Express.Multer.File): Promise<string> {
     try {
       // Todo переписать на асинхронные методы

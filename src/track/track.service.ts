@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { MongoService } from 'src/core/MongoService';
-import { FileService, FileType } from 'src/files/file.service';
+import { FilesService, FileType } from 'src/files/files.service';
 import { createTrackOptions } from 'src/types/tracks';
 import { checkAndThrowErr } from 'src/utils/checkAndThrowErr';
 import { CreateTrackDto } from './dto/createTrackDto';
@@ -12,7 +12,7 @@ import { Track, TrackDocument } from './schemas/track.schema';
 export class TrackService extends MongoService {
   constructor(
     @InjectModel(Track.name) private readonly trackModel: Model<TrackDocument>,
-    private readonly fileService: FileService,
+    private readonly filesService: FilesService,
   ) {
     super(trackModel);
   }
@@ -30,8 +30,8 @@ export class TrackService extends MongoService {
         throw new HttpException('Трек с таким названием уже существует', HttpStatus.CONFLICT);
       }
 
-      const pathImage = await this.fileService.createFile(FileType.IMAGE, image);
-      const pathAudio = await this.fileService.createFile(FileType.AUDIO, audio);
+      const pathImage = await this.filesService.createFile(FileType.IMAGE, image);
+      const pathAudio = await this.filesService.createFile(FileType.AUDIO, audio);
 
       const newTrack = this.createOne<TrackDocument, createTrackOptions>({
         user: userId,
