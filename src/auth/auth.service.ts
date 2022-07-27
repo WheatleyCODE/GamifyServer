@@ -121,7 +121,7 @@ export class AuthService {
         throw new HttpException('Пользователь не авторизован (!userData || !tokensDB)', HttpStatus.UNAUTHORIZED);
       }
 
-      const user = await this.usersService.findUserBy({ _id: tokensDB.userId });
+      const user = await this.usersService.findUserBy({ _id: tokensDB.user });
 
       if (!user) {
         throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);

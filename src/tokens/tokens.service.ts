@@ -27,7 +27,7 @@ export class TokensService {
 
   async saveTokens(userId: string, tokens: AccRefTokens): Promise<Tokens> {
     try {
-      const tokensData = await this.tokensModel.findOne({ userId });
+      const tokensData = await this.tokensModel.findOne({ user: userId });
 
       if (tokensData) {
         tokensData.accessToken = tokens.accessToken;
@@ -35,7 +35,7 @@ export class TokensService {
         return await tokensData.save();
       }
 
-      return await this.tokensModel.create({ userId, ...tokens });
+      return await this.tokensModel.create({ user: userId, ...tokens });
     } catch (e) {
       throw new HttpException('Ошибка при сохранении токенов', HttpStatus.INTERNAL_SERVER_ERROR);
     }

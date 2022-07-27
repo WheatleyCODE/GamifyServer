@@ -6,7 +6,7 @@ export type TokensDocument = Tokens & Document;
 @Schema()
 export class Tokens {
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
-  userId: string;
+  user: string;
 
   @Prop({ type: String, required: true })
   accessToken: string;
