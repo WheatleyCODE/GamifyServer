@@ -1,6 +1,6 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { MongoService } from 'src/core/MongoService';
 import { CreateAlbumOptions } from 'src/types/albums';
 import { checkAndThrowErr } from 'src/utils/checkAndThrowErr';
@@ -9,30 +9,30 @@ import { CreateAlbumDto } from './dto/createAlbumDto';
 import { Album, AlbumDocument } from './schemas/album.schema';
 import { AddTrackDto } from './dto/AddTrackDto';
 import { TrackService } from 'src/track/track.service';
+import { FilesService, FileType } from 'src/files/files.service';
 
 @Injectable()
 export class AlbumService extends MongoService {
   constructor(
     @InjectModel(Album.name) private readonly albumModel: Model<AlbumDocument>,
     private readonly trackService: TrackService,
+    private readonly filesService: FilesService,
   ) {
     super(albumModel);
   }
 
-  async createAlbum(options: CreateAlbumDto): Promise<AlbumDocument> {
+  async createAlbum(options: CreateAlbumDto, image: Express.Multer.File): Promise<AlbumDocument> {
     try {
-      const { name, author, userId } = options;
-      const album = await this.findOneBy<AlbumDocument>({ name });
+      const { name, author, userId, parentId } = options;
 
-      if (album) {
-        throw new HttpException('Альбом с таким названием уже существует', HttpStatus.CONFLICT);
-      }
+      const pathImage = await this.filesService.createFile(FileType.IMAGE, image);
 
       const newAlbum = this.createOne<AlbumDocument, CreateAlbumOptions>({
-        user: userId,
+        user: new Types.ObjectId(userId),
         name,
         author,
-        image: 'Картинки нет',
+        image: pathImage,
+        parent: parentId ? new Types.ObjectId(parentId) : undefined,
       });
 
       return newAlbum;
@@ -76,7 +76,7 @@ export class AlbumService extends MongoService {
       const { name, author, userId } = options;
 
       const album = await this.updateOneById<AlbumDocument, CreateAlbumOptions>(id, {
-        user: userId,
+        user: new Types.ObjectId(userId),
         name,
         author,
         image: 'Картинки нет',

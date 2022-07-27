@@ -9,4 +9,6 @@ export class CreateAlbumDto {
 
   @IsString({ message: 'Должно быть строкой' })
   readonly author: string;
+
+  readonly parentId: string | undefined;
 }

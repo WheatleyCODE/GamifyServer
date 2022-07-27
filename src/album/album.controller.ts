@@ -1,11 +1,24 @@
 import { ValidationPipe } from './../pipes/validation.pipe';
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards, UsePipes } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  UploadedFiles,
+  UseGuards,
+  UseInterceptors,
+  UsePipes,
+} from '@nestjs/common';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { AlbumService } from './album.service';
 import { ReplaceTracksDto } from './dto/replaceTracksDto';
 import { CreateAlbumDto } from './dto/createAlbumDto';
 import { AlbumDocument } from './schemas/album.schema';
 import { AddTrackDto } from './dto/AddTrackDto';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 
 @Controller('/api/albums')
 export class AlbumController {
@@ -25,9 +38,14 @@ export class AlbumController {
 
   @UseGuards(JwtAuthGuard)
   @UsePipes(ValidationPipe)
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'image', maxCount: 1 }]))
   @Post()
-  createAlbum(@Body() dto: CreateAlbumDto): Promise<AlbumDocument> {
-    return this.albumService.createAlbum(dto);
+  createAlbum(
+    @UploadedFiles() files: { image?: Express.Multer.File[] },
+    @Body() dto: CreateAlbumDto,
+  ): Promise<AlbumDocument> {
+    const { image } = files;
+    return this.albumService.createAlbum(dto, image[0]);
   }
 
   @UseGuards(JwtAuthGuard)
