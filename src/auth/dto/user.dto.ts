@@ -1,4 +1,4 @@
-import { Storage } from 'src/storage/schemas/storage.schema';
+import { Types } from 'mongoose';
 import { UserRoles } from 'src/types/users';
 import { UserDocument } from 'src/users/schemas/user.schema';
 
@@ -10,7 +10,7 @@ export class UserDto {
   readonly nickName: string;
   readonly firstName: string | null;
   readonly lastName: string | null;
-  readonly storage: Storage;
+  readonly storage: Types.ObjectId;
 
   constructor(userDocument: UserDocument) {
     this.email = userDocument.email;

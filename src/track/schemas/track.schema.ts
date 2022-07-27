@@ -14,7 +14,7 @@ export class Track {
   type: string;
 
   @Prop({ required: true, type: Types.ObjectId, ref: 'User' })
-  user: User;
+  user: Types.ObjectId;
 
   @Prop({ required: true, type: String })
   name: string;
@@ -35,13 +35,13 @@ export class Track {
   audio: string;
 
   @Prop({ type: Types.ObjectId, ref: 'Album' })
-  album: Album;
+  album: Types.ObjectId;
 
   @Prop({ type: [Types.ObjectId], ref: 'TrackComment' })
-  comments: TrackComment[];
+  comments: Types.ObjectId[];
 
   @Prop({ type: Types.ObjectId, ref: 'Folder' })
-  parent: Folder;
+  parent: Types.ObjectId;
 }
 
 export const TrackSchema = SchemaFactory.createForClass(Track);

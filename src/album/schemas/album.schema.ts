@@ -14,7 +14,7 @@ export class Album {
   type: string;
 
   @Prop({ required: true, type: Types.ObjectId, ref: 'User' })
-  user: User;
+  user: Types.ObjectId;
 
   @Prop({ required: true, type: String })
   name: string;
@@ -26,13 +26,13 @@ export class Album {
   image: string;
 
   @Prop({ type: [Types.ObjectId], ref: 'Track' })
-  tracks: Track[];
+  tracks: Types.ObjectId[];
 
   @Prop({ type: [Types.ObjectId], ref: 'AlbumComment' })
-  comments: AlbumComment[];
+  comments: Types.ObjectId[];
 
   @Prop({ type: Types.ObjectId, ref: 'Folder' })
-  parent: Folder;
+  parent: Types.ObjectId;
 }
 
 export const AlbumSchema = SchemaFactory.createForClass(Album);

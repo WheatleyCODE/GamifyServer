@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { MongoService } from 'src/core/MongoService';
 import { FilesService, FileType } from 'src/files/files.service';
+import { StorageService } from 'src/storage/storage.service';
 import { createTrackOptions } from 'src/types/tracks';
 import { checkAndThrowErr } from 'src/utils/checkAndThrowErr';
 import { CreateTrackDto } from './dto/createTrackDto';
@@ -13,6 +14,7 @@ export class TrackService extends MongoService {
   constructor(
     @InjectModel(Track.name) private readonly trackModel: Model<TrackDocument>,
     private readonly filesService: FilesService,
+    private readonly storageService: StorageService,
   ) {
     super(trackModel);
   }
@@ -23,17 +25,12 @@ export class TrackService extends MongoService {
     audio: Express.Multer.File,
   ): Promise<TrackDocument> {
     try {
-      const { name, author, userId, text } = options;
-      const track = await this.findOneBy<TrackDocument>({ name });
-
-      if (track) {
-        throw new HttpException('Трек с таким названием уже существует', HttpStatus.CONFLICT);
-      }
+      const { name, author, userId, text, parent, album } = options;
 
       const pathImage = await this.filesService.createFile(FileType.IMAGE, image);
       const pathAudio = await this.filesService.createFile(FileType.AUDIO, audio);
 
-      const newTrack = this.createOne<TrackDocument, createTrackOptions>({
+      const newTrack = await this.createOne<TrackDocument, createTrackOptions>({
         user: userId,
         name,
         author,
@@ -41,6 +38,19 @@ export class TrackService extends MongoService {
         image: pathImage,
         audio: pathAudio,
       });
+
+      if (parent) {
+        newTrack.parent = parent as any;
+        await newTrack.save();
+      }
+
+      if (album) {
+        // Todo альбом чуть позже
+      }
+
+      const storage = await this.storageService.getStorageByUserId(userId);
+      storage.tracks.push(newTrack._id);
+      await storage.save();
 
       return newTrack;
     } catch (e) {
