@@ -1,3 +1,4 @@
+import { StorageModule } from 'src/storage/storage.module';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TokensModule } from 'src/tokens/tokens.module';
@@ -12,6 +13,7 @@ import { FilesModule } from 'src/files/files.module';
     TokensModule,
     TrackModule,
     FilesModule,
+    StorageModule,
     MongooseModule.forFeature([{ name: Album.name, schema: AlbumSchema }]),
   ],
   controllers: [AlbumController],

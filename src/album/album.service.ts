@@ -10,6 +10,7 @@ import { Album, AlbumDocument } from './schemas/album.schema';
 import { AddTrackDto } from './dto/AddTrackDto';
 import { TrackService } from 'src/track/track.service';
 import { FilesService, FileType } from 'src/files/files.service';
+import { StorageService } from 'src/storage/storage.service';
 
 @Injectable()
 export class AlbumService extends MongoService {
@@ -17,6 +18,7 @@ export class AlbumService extends MongoService {
     @InjectModel(Album.name) private readonly albumModel: Model<AlbumDocument>,
     private readonly trackService: TrackService,
     private readonly filesService: FilesService,
+    private readonly storageService: StorageService,
   ) {
     super(albumModel);
   }
@@ -27,13 +29,19 @@ export class AlbumService extends MongoService {
 
       const pathImage = await this.filesService.createFile(FileType.IMAGE, image);
 
-      const newAlbum = this.createOne<AlbumDocument, CreateAlbumOptions>({
+      const newAlbum = await this.createOne<AlbumDocument, CreateAlbumOptions>({
         user: new Types.ObjectId(userId),
         name,
         author,
         image: pathImage,
         parent: parentId ? new Types.ObjectId(parentId) : undefined,
       });
+
+      if (!parentId) {
+        const storage = await this.storageService.getStorageByUserId(userId);
+        storage.albums.push(newAlbum._id);
+        await storage.save();
+      }
 
       return newAlbum;
     } catch (e) {

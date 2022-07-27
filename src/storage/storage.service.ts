@@ -52,6 +52,8 @@ export class StorageService extends MongoService {
       }
 
       await storage.populate('folders');
+      await storage.populate('tracks');
+      await storage.populate('albums');
 
       return storage;
     } catch (e) {
