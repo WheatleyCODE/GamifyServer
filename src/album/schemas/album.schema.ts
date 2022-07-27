@@ -2,12 +2,16 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { AlbumComment } from 'src/comment/schemas/albumComment.schema';
 import { Track } from 'src/track/schemas/track.schema';
+import { ItemTypes } from 'src/types/storage';
 import { User } from 'src/users/schemas/user.schema';
 
 export type AlbumDocument = Album & Document;
 
 @Schema()
 export class Album {
+  @Prop({ default: ItemTypes.ALBUM, type: String })
+  type: string;
+
   @Prop({ required: true, type: Types.ObjectId, ref: 'User' })
   user: User;
 

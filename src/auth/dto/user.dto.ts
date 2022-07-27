@@ -1,3 +1,4 @@
+import { Storage } from 'src/storage/schemas/storage.schema';
 import { UserRoles } from 'src/types/users';
 import { UserDocument } from 'src/users/schemas/user.schema';
 
@@ -9,6 +10,7 @@ export class UserDto {
   readonly nickName: string;
   readonly firstName: string | null;
   readonly lastName: string | null;
+  readonly storage: Storage;
 
   constructor(userDocument: UserDocument) {
     this.email = userDocument.email;
@@ -18,5 +20,6 @@ export class UserDto {
     this.nickName = userDocument.nickName;
     this.firstName = userDocument.firstName || null;
     this.lastName = userDocument.lastName || null;
+    this.storage = userDocument.storage;
   }
 }

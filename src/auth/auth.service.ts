@@ -10,6 +10,7 @@ import { ChangePassword, ResetPassword, UserData } from 'src/types/auth';
 import { LoginDto } from './dto/login.dto';
 import { UserDocument } from 'src/users/schemas/user.schema';
 import { TokensDocument } from 'src/tokens/schemas/tokens.schema';
+import { StorageService } from 'src/storage/storage.service';
 
 @Injectable()
 export class AuthService {
@@ -17,6 +18,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly mailService: MailService,
     private readonly tokensService: TokensService,
+    private readonly storageService: StorageService,
   ) {}
 
   async registration(dto: RegistrationDto): Promise<UserData> {
@@ -40,6 +42,10 @@ export class AuthService {
         password: hashPassword,
         activationLink: randomString,
       });
+
+      const storage = await this.storageService.createStorage(newUser._id);
+      newUser.storage = storage._id;
+      await newUser.save();
 
       return await this.getTokensAndUserData(newUser);
     } catch (e) {

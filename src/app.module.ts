@@ -12,6 +12,7 @@ import { TrackModule } from './track/track.module';
 import { CommentModule } from './comment/comment.module';
 import { AlbumModule } from './album/album.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { StorageModule } from './storage/storage.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
     TrackModule,
     CommentModule,
     AlbumModule,
+    StorageModule,
   ],
   controllers: [AppController],
   providers: [],

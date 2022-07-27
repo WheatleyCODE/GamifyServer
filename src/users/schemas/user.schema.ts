@@ -1,7 +1,8 @@
 /* eslint-disable prettier/prettier */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
+import { Storage } from 'src/storage/schemas/storage.schema';
 import { UserRoles } from 'src/types/users';
 
 export type UserDocument = User & Document;
@@ -43,6 +44,9 @@ export class User {
   @ApiProperty({ description: 'Cсылка для сброса пароля' })
   @Prop({ type: String })
   resetPasswordLink: string;
+
+  @Prop({ type: Types.ObjectId, ref: 'Storage' })
+  storage: Storage;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
