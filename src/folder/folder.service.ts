@@ -20,8 +20,6 @@ export class FolderService extends MongoService {
     try {
       const { storageId, name, parentId } = dto;
 
-      console.log(parentId);
-
       const storage = await this.storageService.getOneStorage(storageId);
       const newFolder = await this.createOne<FolderDocument, CreateFolderOptions>({
         user: storage.user,
@@ -35,6 +33,14 @@ export class FolderService extends MongoService {
       }
 
       return newFolder;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  async getAllFoldersByParent(parentId: string): Promise<FolderDocument[]> {
+    try {
+      return await this.folderModel.find({ parent: new Types.ObjectId(parentId) });
     } catch (e) {
       throw e;
     }

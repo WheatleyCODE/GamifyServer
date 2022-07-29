@@ -14,6 +14,7 @@ import { AlbumModule } from './album/album.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { StorageModule } from './storage/storage.module';
 import { FolderModule } from './folder/folder.module';
+import { SearchModule } from './search/search.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { FolderModule } from './folder/folder.module';
     AlbumModule,
     StorageModule,
     FolderModule,
+    SearchModule,
   ],
   controllers: [AppController],
   providers: [],

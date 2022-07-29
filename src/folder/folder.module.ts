@@ -10,5 +10,6 @@ import { StorageModule } from 'src/storage/storage.module';
   imports: [TokensModule, StorageModule, MongooseModule.forFeature([{ name: Folder.name, schema: FolderSchema }])],
   providers: [FolderService],
   controllers: [FolderController],
+  exports: [FolderService],
 })
 export class FolderModule {}

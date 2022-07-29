@@ -133,4 +133,12 @@ export class TrackService extends MongoService {
       throw new HttpException('Ошибка при поиске треков', HttpStatus.BAD_REQUEST);
     }
   }
+
+  async getAllTracksByParent(parentId: string): Promise<TrackDocument[]> {
+    try {
+      return await this.trackModel.find({ parent: new Types.ObjectId(parentId) });
+    } catch (e) {
+      throw e;
+    }
+  }
 }

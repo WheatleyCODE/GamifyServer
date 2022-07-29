@@ -138,4 +138,12 @@ export class AlbumService extends MongoService {
       throw e;
     }
   }
+
+  async getAllAlbumsByParent(parentId: string): Promise<AlbumDocument[]> {
+    try {
+      return await this.albumModel.find({ parent: new Types.ObjectId(parentId) });
+    } catch (e) {
+      throw e;
+    }
+  }
 }
