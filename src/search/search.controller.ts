@@ -9,7 +9,7 @@ export class SearchController {
 
   @UseGuards(JwtAuthGuard)
   @Get('/childrens/:id')
-  getAllTracks(@Param() param: { id: string }): Promise<ChildrenDocuments> {
+  getChildrens(@Param() param: { id: string }): Promise<ChildrenDocuments> {
     return this.searchService.searchChildrens(param.id);
   }
 }

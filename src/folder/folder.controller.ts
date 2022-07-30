@@ -1,5 +1,5 @@
 import { ValidationPipe } from 'src/pipes/validation.pipe';
-import { Body, Controller, Post, UseGuards, UsePipes } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards, UsePipes } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { CreateFolderDto } from './dto/createFolderDto';
 import { FolderService } from './folder.service';
@@ -14,5 +14,11 @@ export class FolderController {
   @Post()
   createAlbum(@Body() dto: CreateFolderDto): Promise<FolderDocument> {
     return this.folderService.createFolder(dto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/parents/:id')
+  getChildrens(@Param() param: { id: string }): Promise<FolderDocument[]> {
+    return this.folderService.getAllParents(param.id);
   }
 }

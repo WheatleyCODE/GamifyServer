@@ -9,7 +9,7 @@ export class StorageController {
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-  getOneTrack(@Param() param: { id: string }): Promise<StorageDocument> {
+  getOneStorage(@Param() param: { id: string }): Promise<StorageDocument> {
     return this.storageService.getOneStorage(param.id);
   }
 }

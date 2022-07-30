@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { MongoService } from 'src/core/MongoService';
@@ -41,6 +41,35 @@ export class FolderService extends MongoService {
   async getAllFoldersByParent(parentId: string): Promise<FolderDocument[]> {
     try {
       return await this.folderModel.find({ parent: new Types.ObjectId(parentId) });
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  async getAllParents(id: string): Promise<FolderDocument[]> {
+    try {
+      const parents = [];
+      const folder = await this.folderModel.findById(id);
+
+      if (!folder) throw new HttpException('Папка не найдена', HttpStatus.BAD_REQUEST);
+      parents.push(folder);
+
+      let isParent = false;
+      let current = folder;
+      if (folder.parent) isParent = true;
+
+      while (isParent) {
+        if (!current.parent) {
+          isParent = false;
+          continue;
+        }
+
+        const parentFolder = await this.folderModel.findById(current.parent);
+        parents.push(parentFolder);
+        current = parentFolder;
+      }
+
+      return parents.reverse();
     } catch (e) {
       throw e;
     }
