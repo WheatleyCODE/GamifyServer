@@ -3,7 +3,7 @@ import { Document, Types } from 'mongoose';
 import { AlbumComment } from 'src/comment/schemas/albumComment.schema';
 import { Folder } from 'src/folder/schemas/folder.schema';
 import { Track } from 'src/track/schemas/track.schema';
-import { ItemTypes } from 'src/types/storage';
+import { AccessType, ItemTypes } from 'src/types/storage';
 import { User } from 'src/users/schemas/user.schema';
 
 export type AlbumDocument = Album & Document;
@@ -33,6 +33,18 @@ export class Album {
 
   @Prop({ type: Types.ObjectId, ref: 'Folder' })
   parent: Types.ObjectId;
+
+  @Prop({ type: String })
+  accesLink: string;
+
+  @Prop({ default: AccessType.PRIVATE, type: String })
+  accessType: AccessType;
+
+  @Prop({ default: Date.now(), type: Number })
+  creationDate: number;
+
+  @Prop({ default: Date.now(), type: Number })
+  openDate: number;
 }
 
 export const AlbumSchema = SchemaFactory.createForClass(Album);

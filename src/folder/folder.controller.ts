@@ -4,6 +4,9 @@ import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { CreateFolderDto } from './dto/createFolderDto';
 import { FolderService } from './folder.service';
 import { FolderDocument } from './schemas/folder.schema';
+import { RenameFolderDto } from './dto/renameFolderDto';
+import { ChangeFolderAccessType } from './dto/changeFolderAccessType';
+import { CreateFolderAccessLink } from './dto/createFolderAccessLink';
 
 @Controller('/api/folders')
 export class FolderController {
@@ -12,7 +15,7 @@ export class FolderController {
   @UseGuards(JwtAuthGuard)
   @UsePipes(ValidationPipe)
   @Post()
-  createAlbum(@Body() dto: CreateFolderDto): Promise<FolderDocument> {
+  createFolder(@Body() dto: CreateFolderDto): Promise<FolderDocument> {
     return this.folderService.createFolder(dto);
   }
 
@@ -20,5 +23,26 @@ export class FolderController {
   @Get('/parents/:id')
   getChildrens(@Param() param: { id: string }): Promise<FolderDocument[]> {
     return this.folderService.getAllParents(param.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @UsePipes(ValidationPipe)
+  @Post('/rename')
+  renameFolder(@Body() dto: RenameFolderDto): Promise<FolderDocument> {
+    return this.folderService.renameFolder(dto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @UsePipes(ValidationPipe)
+  @Post('/change/access')
+  changeAccessType(@Body() dto: ChangeFolderAccessType): Promise<FolderDocument> {
+    return this.folderService.changeFolderAccessType(dto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @UsePipes(ValidationPipe)
+  @Post('/create/access-link')
+  createAccessLink(@Body() dto: CreateFolderAccessLink): Promise<FolderDocument> {
+    return this.folderService.createFolderAccessLink(dto);
   }
 }

@@ -3,7 +3,7 @@ import { Document, Types } from 'mongoose';
 import { Album } from 'src/album/schemas/album.schema';
 import { TrackComment } from 'src/comment/schemas/trackComment.schema';
 import { Folder } from 'src/folder/schemas/folder.schema';
-import { ItemTypes } from 'src/types/storage';
+import { AccessType, ItemTypes } from 'src/types/storage';
 import { User } from 'src/users/schemas/user.schema';
 
 export type TrackDocument = Track & Document;
@@ -42,6 +42,18 @@ export class Track {
 
   @Prop({ type: Types.ObjectId, ref: 'Folder' })
   parent: Types.ObjectId;
+
+  @Prop({ type: String })
+  accesLink: string;
+
+  @Prop({ default: AccessType.PRIVATE, type: String })
+  accessType: AccessType;
+
+  @Prop({ default: Date.now(), type: Number })
+  creationDate: number;
+
+  @Prop({ default: Date.now(), type: Number })
+  openDate: number;
 }
 
 export const TrackSchema = SchemaFactory.createForClass(Track);

@@ -1,10 +1,14 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import * as uuid from 'uuid';
 import { Model, Types } from 'mongoose';
 import { MongoService } from 'src/core/MongoService';
 import { StorageService } from 'src/storage/storage.service';
 import { CreateFolderOptions } from 'src/types/folder';
+import { ChangeFolderAccessType } from './dto/changeFolderAccessType';
+import { CreateFolderAccessLink } from './dto/createFolderAccessLink';
 import { CreateFolderDto } from './dto/createFolderDto';
+import { RenameFolderDto } from './dto/renameFolderDto';
 import { Folder, FolderDocument } from './schemas/folder.schema';
 
 @Injectable()
@@ -70,6 +74,55 @@ export class FolderService extends MongoService {
       }
 
       return parents.reverse();
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  async renameFolder(dto: RenameFolderDto): Promise<FolderDocument> {
+    try {
+      const { folderId, name } = dto;
+      const folder = await this.findOneById<FolderDocument>(folderId);
+
+      if (!folder) throw new HttpException('Папка не найдена', HttpStatus.BAD_REQUEST);
+
+      folder.name = name;
+      await folder.save();
+
+      return folder;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  async changeFolderAccessType(dto: ChangeFolderAccessType): Promise<FolderDocument> {
+    try {
+      const { folderId, accessType } = dto;
+      const folder = await this.findOneById<FolderDocument>(folderId);
+
+      if (!folder) throw new HttpException('Папка не найдена', HttpStatus.BAD_REQUEST);
+
+      folder.accessType = accessType;
+      await folder.save();
+
+      return folder;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  async createFolderAccessLink(dto: CreateFolderAccessLink): Promise<FolderDocument> {
+    try {
+      const { folderId } = dto;
+      const folder = await this.findOneById<FolderDocument>(folderId);
+
+      if (!folder) throw new HttpException('Папка не найдена', HttpStatus.BAD_REQUEST);
+
+      const link = uuid.v4();
+      folder.accesLink = `${process.env.URL_CLIENT}/share/folders/${link}`;
+      await folder.save();
+
+      return folder;
     } catch (e) {
       throw e;
     }
