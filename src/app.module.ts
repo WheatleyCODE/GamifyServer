@@ -15,6 +15,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { StorageModule } from './storage/storage.module';
 import { FolderModule } from './folder/folder.module';
 import { SearchModule } from './search/search.module';
+import { RemoverModule } from './remover/remover.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { SearchModule } from './search/search.module';
     StorageModule,
     FolderModule,
     SearchModule,
+    RemoverModule,
   ],
   controllers: [AppController],
   providers: [],

@@ -50,6 +50,34 @@ export class FolderService extends MongoService {
     }
   }
 
+  async removeOne(id: string): Promise<FolderDocument> {
+    try {
+      const children = await this.folderModel.find({ parent: new Types.ObjectId(id) });
+      const folder = await this.folderModel.findById(id);
+
+      if (children.length === 0) {
+        return folder.delete();
+      }
+
+      this.recDelFolders(children, folder);
+      return folder;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  private async recDelFolders(childs, prevChild) {
+    for await (const child of childs) {
+      const newChilds = await this.folderModel.find({ parent: new Types.ObjectId(child._id) });
+      this.recDelFolders(newChilds, child);
+
+      if (newChilds.length === 0) {
+        child.delete();
+        prevChild.delete();
+      }
+    }
+  }
+
   async getAllParents(id: string): Promise<FolderDocument[]> {
     try {
       const parents = [];

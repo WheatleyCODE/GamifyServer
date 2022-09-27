@@ -19,5 +19,6 @@ import { TokensModule } from 'src/tokens/tokens.module';
   ],
   controllers: [CommentController],
   providers: [TrackCommentService, AlbumCommentService],
+  exports: [TrackCommentService, AlbumCommentService],
 })
 export class CommentModule {}
