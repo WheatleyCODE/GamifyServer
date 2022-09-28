@@ -12,6 +12,7 @@ export class SearchService {
     private readonly albumService: AlbumService,
   ) {}
 
+  // ! Cделать что бы изменялась дата открытия
   async searchChildrens(id: string): Promise<ChildrenDocuments> {
     try {
       const tracks = await this.trackService.getAllTracksByParent(id);

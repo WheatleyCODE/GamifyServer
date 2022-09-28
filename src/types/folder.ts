@@ -4,4 +4,6 @@ export interface CreateFolderOptions {
   user: Types.ObjectId;
   name: string;
   parent?: Types.ObjectId;
+  creationDate: number;
+  openDate: number;
 }

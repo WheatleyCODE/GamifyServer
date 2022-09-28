@@ -29,7 +29,11 @@ export class FolderService extends MongoService {
         user: storage.user,
         name,
         parent: parentId ? new Types.ObjectId(parentId) : undefined,
+        openDate: Date.now(),
+        creationDate: Date.now(),
       });
+
+      console.log(newFolder);
 
       if (!parentId) {
         storage.folders.push(newFolder._id);
