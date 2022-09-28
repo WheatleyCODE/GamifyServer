@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { UserRoles } from 'src/types/users';
+import { UserRoles } from 'src/types/user';
 import { UserDocument } from 'src/user/schemas/user.schema';
 
 export class UserDto {

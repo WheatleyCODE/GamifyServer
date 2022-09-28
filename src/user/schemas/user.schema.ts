@@ -2,7 +2,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Document, Types } from 'mongoose';
-import { UserRoles } from 'src/types/users';
+import { UserRoles } from 'src/types/user';
 
 export type UserDocument = User & Document;
 

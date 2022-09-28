@@ -3,7 +3,7 @@ import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Roles } from 'src/decorators/roles-auth.decorator';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { RolesGuard } from 'src/guards/roles.guard';
-import { UserRoles } from 'src/types/users';
+import { UserRoles } from 'src/types/user';
 import { User, UserDocument } from './schemas/user.schema';
 import { UsersService } from './user.service';
 
