@@ -12,6 +12,14 @@ export abstract class MongoService {
     }
   }
 
+  protected async deleteOneById<T>(id: string): Promise<T> {
+    try {
+      return await this.model.findByIdAndDelete(id);
+    } catch (e) {
+      throw new HttpException(`Ошибка при удалении ${this.model.modelName}`, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   protected async updateOneById<T, O>(id: string, options: O): Promise<T> {
     try {
       return await this.model.findByIdAndUpdate(id, options);
@@ -61,14 +69,6 @@ export abstract class MongoService {
       return await this.model.find({ _id: { $in: ids } });
     } catch (e) {
       throw new HttpException(`Ошибка при поиске ${this.model.modelName} по ids`, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-
-  protected async deleteOneById<T>(id: string): Promise<T> {
-    try {
-      return await this.model.findByIdAndDelete(id);
-    } catch (e) {
-      throw new HttpException(`Ошибка при удалении ${this.model.modelName}`, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

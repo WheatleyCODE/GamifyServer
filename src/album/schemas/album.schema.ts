@@ -4,7 +4,7 @@ import { AlbumComment } from 'src/comment/schemas/albumComment.schema';
 import { Folder } from 'src/folder/schemas/folder.schema';
 import { Track } from 'src/track/schemas/track.schema';
 import { AccessType, ItemTypes } from 'src/types/storage';
-import { User } from 'src/users/schemas/user.schema';
+import { User } from 'src/user/schemas/user.schema';
 
 export type AlbumDocument = Album & Document;
 

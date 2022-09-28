@@ -2,13 +2,13 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import * as uuid from 'uuid';
 import * as bcrypt from 'bcrypt';
 import { MailService } from 'src/mail/mail.service';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from 'src/user/user.service';
 import { RegistrationDto } from './dto/registration.dto';
 import { TokensService } from 'src/tokens/tokens.service';
 import { UserDto } from './dto/user.dto';
 import { ChangePassword, ResetPassword, UserData } from 'src/types/auth';
 import { LoginDto } from './dto/login.dto';
-import { UserDocument } from 'src/users/schemas/user.schema';
+import { UserDocument } from 'src/user/schemas/user.schema';
 import { TokensDocument } from 'src/tokens/schemas/tokens.schema';
 import { StorageService } from 'src/storage/storage.service';
 
@@ -24,7 +24,7 @@ export class AuthService {
   async registration(dto: RegistrationDto): Promise<UserData> {
     try {
       const { password, email } = dto;
-      const user = await this.usersService.findUserBy({
+      const user = await this.usersService.getOneBy({
         email,
       });
 
@@ -56,7 +56,7 @@ export class AuthService {
   async login(dto: LoginDto): Promise<UserData> {
     try {
       const { email, password } = dto;
-      const user = await this.usersService.findUserBy({ email });
+      const user = await this.usersService.getOneBy({ email });
 
       if (!user) {
         throw new HttpException('Неверная почта или пароль', HttpStatus.BAD_REQUEST);
@@ -99,7 +99,7 @@ export class AuthService {
 
   async activate(activationLink: string): Promise<void> {
     try {
-      const user = await this.usersService.findUserBy({
+      const user = await this.usersService.getOneBy({
         activationLink,
       });
 
@@ -127,7 +127,7 @@ export class AuthService {
         throw new HttpException('Пользователь не авторизован (!userData || !tokensDB)', HttpStatus.UNAUTHORIZED);
       }
 
-      const user = await this.usersService.findUserBy({ _id: tokensDB.user });
+      const user = await this.usersService.getOneBy({ _id: tokensDB.user });
 
       if (!user) {
         throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
@@ -141,7 +141,7 @@ export class AuthService {
 
   async resetPassword(email: string): Promise<ResetPassword> {
     try {
-      const user = await this.usersService.findUserBy({ email });
+      const user = await this.usersService.getOneBy({ email });
 
       if (!user) {
         throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
@@ -165,7 +165,7 @@ export class AuthService {
 
   async changePassword(password: string, resetPasswordLink: string): Promise<ChangePassword> {
     try {
-      const user = await this.usersService.findUserBy({ resetPasswordLink });
+      const user = await this.usersService.getOneBy({ resetPasswordLink });
 
       if (!user) {
         throw new HttpException('Пользователь не запрашивал смену пароля', HttpStatus.NOT_FOUND);
@@ -187,7 +187,7 @@ export class AuthService {
 
   async loginByActivationLink(activationLink: string): Promise<UserData> {
     try {
-      const user = await this.usersService.findUserBy({ activationLink });
+      const user = await this.usersService.getOneBy({ activationLink });
 
       if (!user) {
         throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);

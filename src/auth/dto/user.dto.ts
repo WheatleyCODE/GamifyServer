@@ -1,6 +1,6 @@
 import { Types } from 'mongoose';
 import { UserRoles } from 'src/types/users';
-import { UserDocument } from 'src/users/schemas/user.schema';
+import { UserDocument } from 'src/user/schemas/user.schema';
 
 export class UserDto {
   readonly email: string;

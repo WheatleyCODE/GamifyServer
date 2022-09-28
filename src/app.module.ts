@@ -3,7 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import * as path from 'path';
 import { AppController } from './app.controller';
-import { UsersModule } from './users/users.module';
+import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { TokensModule } from './tokens/tokens.module';
 import { MailModule } from './mail/mail.module';
@@ -19,7 +19,7 @@ import { RemoverModule } from './remover/remover.module';
 
 @Module({
   imports: [
-    UsersModule,
+    UserModule,
     ConfigModule.forRoot({ envFilePath: `.${process.env.NODE_ENV}.env` }),
     ServeStaticModule.forRoot({
       rootPath: path.resolve(__dirname, 'static'),
