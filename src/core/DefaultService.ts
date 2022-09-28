@@ -1,5 +1,4 @@
 export abstract class DefaultService<T, O> {
-  abstract create(options: any): Promise<T>;
   abstract delete(id: string): Promise<T>;
   abstract getAll(pag?: { count: number; offset: number }): Promise<T[]>;
   abstract update(id: string, options: O): Promise<T>;

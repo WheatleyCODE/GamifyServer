@@ -10,4 +10,12 @@ export class UserService extends Service<UserDocument, CreateUserOptions> {
   constructor(@InjectModel(User.name) userModel: Model<UserDocument>) {
     super(userModel);
   }
+
+  async create(options: CreateUserOptions): Promise<UserDocument> {
+    try {
+      return await this.createOne(options);
+    } catch (e) {
+      throw e;
+    }
+  }
 }

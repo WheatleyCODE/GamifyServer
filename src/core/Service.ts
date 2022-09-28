@@ -2,13 +2,7 @@ import { DefaultService } from './DefaultService';
 import { MongoService } from './MongoService';
 
 export abstract class Service<T, O> extends MongoService implements DefaultService<T, O> {
-  async create(options: O): Promise<T> {
-    try {
-      return await this.createOne<T, O>(options);
-    } catch (e) {
-      throw e;
-    }
-  }
+  abstract create(o: any): Promise<T>;
 
   async delete(id: string): Promise<T> {
     try {
