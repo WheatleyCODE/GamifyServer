@@ -5,11 +5,11 @@ import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { RolesGuard } from 'src/guards/roles.guard';
 import { UserRoles } from 'src/types/user';
 import { User, UserDocument } from './schemas/user.schema';
-import { UsersService } from './user.service';
+import { UserService } from './user.service';
 
 @Controller('/api/users')
 export class UserController {
-  constructor(private readonly userService: UsersService) {}
+  constructor(private readonly userService: UserService) {}
 
   @UseGuards(JwtAuthGuard)
   @Roles(UserRoles.ADMIN)

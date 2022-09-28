@@ -6,7 +6,7 @@ import { CreateUserOptions } from 'src/types/user';
 import { Service } from 'src/core/Service';
 
 @Injectable()
-export class UsersService extends Service<UserDocument, CreateUserOptions> {
+export class UserService extends Service<UserDocument, CreateUserOptions> {
   constructor(@InjectModel(User.name) userModel: Model<UserDocument>) {
     super(userModel);
   }
